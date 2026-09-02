@@ -44,8 +44,8 @@ def organizar_dados(todos_dados):
         dados_pre_patient = {
             "safetyreportid": relatorio.get("safetyreportid"),
             "patientonsetage": patient.get("patientonsetage"),#Y
-            "patientonsetageunit": patient.get("patientonsetageunit"),
-            "patientsex": patient.get("patientsex"),
+            "patientonsetageunit": patient.get("patientonsetageunit"),#Y
+            "patientsex": patient.get("patientsex"),#Y
             "patientdeathdateformat": patientdeath.get("patientdeathdateformat"),
             "patientdeathdate": patientdeath.get("patientdeathdate")#Y
         }
@@ -109,13 +109,12 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
     df_patient['patientdeathdate'] = pd.to_datetime(df_report['patientdeathdate'], format='%Y%m%d')
 
     #normalização de inteiros
-    patientonsetageunit
-    df_patient['patientonsetage'] = df_patient['patientonsetage'].astype(int)
+    df_patient['patientonsetage'] = df_patient['patientonsetage'].astype('Int64')
 
     #conversão de código: consultar documentação
     traducao_seriedade = {1: 'Grave', 2: 'Não Grave'} #tradução dos campos serius
     df_report['serious'] = df_report['serious'].replace(traducao_seriedade)
-    df_report['seriousnessdeath'] = df_report['seriousnessdeath'].replace(1:'Óbito')
+    df_report['seriousnessdeath'] = df_report['seriousnessdeath'].replace(1,'Óbito')
     df_report['seriousnessdeath'] = df_report['seriousnessdeath'].fillna('Não Fatal')
 
     traducao_velocidade_processamento_relatorio = {1: 'sim', 2: 'Não'}
@@ -124,8 +123,12 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
     traducao_qualificação = {1: 'Médico', 2: 'Farmacêutico', 3: 'Outro profissional de saúde',4: 'Advogado', 5: 'Consumidor ou profissional que não atua na área da saúde'}
     df_report['qualification'] = df_report['qualification'].replace(traducao_qualificação)
 
-    
+    traducao_age_unit = {800: 'Década', 801: 'Ano', 802: 'Mês', 803: 'Semana', 804: 'Dia', 805: 'Hora'}
+    df_patient['patientonsetageunit'] = df_patient['patientonsetageunit'].replace(traducao_age_unit) #--------------tratar caso venha um código desconhcido------------
 
+    traducao_sex = {0: 'Unknown', 1: 'Male', 2: 'Female'}
+    df_patient['patientsex'] = df_patient['patientsex'].replace(traducao_sex)
+    
     #padronização de texto
     df_report['reportercountry'] = df_report['reportercountry'].str.upper().str.strip()
     df_report['senderorganization'] = df_report['senderorganization'].str.strip()
