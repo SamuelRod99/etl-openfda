@@ -1,53 +1,93 @@
 import logging
 
 from extração import extrair_dados
+from transformação import organizar_dados
+from transformação import criar_dataframes
 from transformação import transformar_dados
 
 
-# ---------------------------------
-# CONFIGURAÇÃO DO LOGGING
-# ---------------------------------
-
+# Configuração do logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 
-# ---------------------------------
-# CONFIGURAÇÕES
-# ---------------------------------
-
-URL = "https://api.fda.gov/drug/event.json"
-
-LIMIT = 1
-
-MAX_PAGINAS = 1
-
-
-# ---------------------------------
-# PIPELINE
-# ---------------------------------
-
 def main():
 
-    # ETAPA 1 — EXTRAÇÃO
+    # URL da API
+    url = "https://api.fda.gov/drug/event.json"
+
+    # -------------------------
+    # 1. EXTRAÇÃO
+    # -------------------------
 
     todos_dados = extrair_dados(
-        url=URL,
-        limit=LIMIT,
-        max_paginas=MAX_PAGINAS
+        url=url,
+        limit=3,
+        max_paginas=1
     )
 
-    # ETAPA 2 — TRANSFORMAÇÃO
+    # -------------------------
+    # 2. ORGANIZAÇÃO
+    # -------------------------
 
-    dados_transformados = transformar_dados(todos_dados)
-    #criar dataframes
-    dataframes = criar_dataframes( dados_report, dados_patient, dados_reaction, dados_drug)
+    (
+        dados_report,
+        dados_patient,
+        dados_reaction,
+        dados_drug
+    ) = organizar_dados(todos_dados)
 
-    # Visualização temporária
-    print(dados_transformados["report"])
-    print( df_report)
+    # -------------------------
+    # 3. CRIAÇÃO DOS DATAFRAMES
+    # -------------------------
+
+    (
+        df_report,
+        df_patient,
+        df_reaction,
+        df_drug
+    ) = criar_dataframes(
+        dados_report,
+        dados_patient,
+        dados_reaction,
+        dados_drug
+    )
+
+    # -------------------------
+    # 4. TRANSFORMAÇÃO
+    # -------------------------
+
+    (
+        df_report,
+        df_patient,
+        df_reaction,
+        df_drug
+    ) = transformar_dados(
+        df_report,
+        df_patient,
+        df_reaction,
+        df_drug
+    )
+
+    # -------------------------
+    # 5. RESULTADO
+    # -------------------------
+
+    print("\nETL executado com sucesso!")
+
+    print("\nREPORT:")
+    print(df_report.head())
+
+    print("\nPATIENT:")
+    print(df_patient.head())
+
+    print("\nREACTION:")
+    print(df_reaction.head())
+
+    print("\nDRUG:")
+    print(df_drug.head())
 
 
 if __name__ == "__main__":

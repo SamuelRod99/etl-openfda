@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def extrair_dados(url, limit=3, max_paginas=1):
 
-    skip = 1
+    skip = 0
     todos_dados = []
 
     logger.info("Extração iniciada")
