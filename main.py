@@ -4,6 +4,9 @@ from extração import extrair_dados
 from transformação import organizar_dados
 from transformação import criar_dataframes
 from transformação import transformar_dados
+from load import load
+from Validacao import validar_dados
+from Validacao import valid_quanti_dados
 
 
 # Configuração do logging
@@ -12,6 +15,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
+logger = logging.getLogger(__name__)
 
 def main():
 
@@ -19,9 +23,8 @@ def main():
     url = "https://api.fda.gov/drug/event.json"
 
     # -------------------------
-    # 1. EXTRAÇÃO
+    # EXTRAÇÃO
     # -------------------------
-
     todos_dados = extrair_dados(
         url=url,
         limit=3,
@@ -29,9 +32,9 @@ def main():
     )
 
     # -------------------------
-    # 2. ORGANIZAÇÃO
+    # ORGANIZAÇÃO
     # -------------------------
-
+    
     (
         dados_report,
         dados_patient,
@@ -39,8 +42,9 @@ def main():
         dados_drug
     ) = organizar_dados(todos_dados)
 
+    logger.info("Extração finalizada")
     # -------------------------
-    # 3. CRIAÇÃO DOS DATAFRAMES
+    # CRIAÇÃO DOS DATAFRAMES
     # -------------------------
 
     (
@@ -54,9 +58,9 @@ def main():
         dados_reaction,
         dados_drug
     )
-
+    logger.info("Criação de dataframes finalizada")
     # -------------------------
-    # 4. TRANSFORMAÇÃO
+    # TRANSFORMAÇÃO
     # -------------------------
 
     (
@@ -70,24 +74,35 @@ def main():
         df_reaction,
         df_drug
     )
-
+    logger.info("Tratamento de dados finalizado")
+    #-------------------------
+    # LOAD
+     #-------------------------
+    load(df_report, df_patient, df_reaction, df_drug)
+    #-------------------------
+    # Validação
     # -------------------------
-    # 5. RESULTADO
+    validar_dados(df_report, df_patient, df_reaction, df_drug)
+    valid_quanti_dados(dados_report, df_report)
+    
+    #-------------------------
+    # RESULTADO
     # -------------------------
+    logger.info("carregamento finalizado")
 
-    print("\nETL executado com sucesso!")
+    logger.info("ETL executado com sucesso!")
 
     print("\nREPORT:")
-    print(df_report.head())
+    print(df_report.info())
 
     print("\nPATIENT:")
-    print(df_patient.head())
+    print(df_patient.info())
 
     print("\nREACTION:")
-    print(df_reaction.head())
+    print(df_reaction.info())
 
     print("\nDRUG:")
-    print(df_drug.head())
+    print(df_drug.info())
 
 
 if __name__ == "__main__":

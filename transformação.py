@@ -1,5 +1,7 @@
 import logging
 import pandas as pd
+import numpy as np
+from datetime import date
 
 
 logger = logging.getLogger(__name__)
@@ -21,13 +23,10 @@ def organizar_dados(todos_dados):
 
         dados_pre_report = {
             "safetyreportid": relatorio.get("safetyreportid"),
-            "transmissiondateformat": relatorio.get("transmissiondateformat"),
             "transmissiondate": relatorio.get("transmissiondate"),
             "serious": relatorio.get("serious"),
             "seriousnessdeath": relatorio.get("seriousnessdeath"),
-            "receivedateformat": relatorio.get("receivedateformat"),
             "receivedate": relatorio.get("receivedate"),
-            "receiptdateformat": relatorio.get("receiptdateformat"),
             "receiptdate": relatorio.get("receiptdate"),
             "fulfillexpeditecriteria": relatorio.get("fulfillexpeditecriteria"),
             "companynumb": relatorio.get("companynumb"),
@@ -48,7 +47,6 @@ def organizar_dados(todos_dados):
             "patientonsetage": patient.get("patientonsetage"),
             "patientonsetageunit": patient.get("patientonsetageunit"),
             "patientsex": patient.get("patientsex"),
-            "patientdeathdateformat": patientdeath.get("patientdeathdateformat"),
             "patientdeathdate": patientdeath.get("patientdeathdate")
         }
         dados_patient.append(dados_pre_patient)
@@ -97,10 +95,6 @@ def criar_dataframes( dados_report, dados_patient, dados_reaction, dados_drug):
     )
 
 def transformar_dados(df_report, df_patient, df_reaction, df_drug):
-
-    print(df_report.dtypes)
-    print(df_report.head())
-
     
     #remover duplicadas e nulos
     df_report.drop_duplicates(inplace=True)
@@ -113,14 +107,17 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
     df_reaction = df_reaction.dropna(subset=["safetyreportid"])
     df_drug = df_drug.dropna(subset=["safetyreportid"])
 
-    #normalização de datas
+    #normalização de datas          #pela documntação da api todas as datas são setadas no mesmo formato
     df_report['transmissiondate'] = pd.to_datetime(df_report['transmissiondate'], format='%Y%m%d', errors='coerce')
     df_report['receivedate'] = pd.to_datetime(df_report['receivedate'], format='%Y%m%d', errors='coerce')
+    df_report.loc[df_report["receivedate"] > pd.Timestamp.today(), "receivedate"] = np.nan #valores de data acima da data atual serão entendidos como valores informados de forma errado, portanto transformados em nulos
     df_report['receiptdate'] = pd.to_datetime(df_report['receiptdate'], format='%Y%m%d', errors='coerce')
     df_patient['patientdeathdate'] = pd.to_datetime(df_patient['patientdeathdate'], format='%Y%m%d', errors='coerce')
 
     #normalização de inteiros
-    df_patient['patientonsetage'] = df_patient['patientonsetage'].astype('Int64')
+    df_patient['patientonsetage'] = pd.to_numeric(df_patient['patientonsetage'], errors="coerce")
+    df_patient.loc[df_patient["patientonsetage"] < 0, "patientonsetage"] = np.nan #valores de idade abaixo de zero serão entendidos como valores informados de forma errado, portanto transformados em nulos
+    df_patient.loc[df_patient["patientonsetage"] > 120, "patientonsetage"] = np.nan 
 
     #conversão de código: consultar documentação
     traducao_seriedade = {'1': 'Grave', '2': 'Não Grave'} #tradução dos campos serius
@@ -156,9 +153,12 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
 
 
 
+
+
     return (
         df_report,
         df_patient,
         df_reaction,
         df_drug
     )
+

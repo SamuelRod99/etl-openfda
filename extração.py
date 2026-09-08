@@ -60,7 +60,6 @@ def extrair_dados(url, limit=3, max_paginas=1):
             logger.error("Erro inesperado: %s", erro)
             break
 
-    logger.info("Extração finalizada")
 
     # Validação dos dados extraídos
     if not isinstance(todos_dados, list):
