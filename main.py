@@ -76,14 +76,14 @@ def main():
     )
     logger.info("Tratamento de dados finalizado")
     #-------------------------
-    # LOAD
-     #-------------------------
-    load(df_report, df_patient, df_reaction, df_drug)
-    #-------------------------
     # Validação
     # -------------------------
     validar_dados(df_report, df_patient, df_reaction, df_drug)
     valid_quanti_dados(dados_report, df_report)
+    #-------------------------
+    # LOAD
+    #-------------------------
+    load(df_report, df_patient, df_reaction, df_drug)
     
     #-------------------------
     # RESULTADO

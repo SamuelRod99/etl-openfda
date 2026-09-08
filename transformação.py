@@ -151,14 +151,5 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
     df_drug['medicinalproduct'] = df_drug['medicinalproduct'].str.upper().str.strip()
     df_drug['drugindication'] = df_drug['drugindication'].str.upper().str.strip()
 
-
-
-
-
-    return (
-        df_report,
-        df_patient,
-        df_reaction,
-        df_drug
-    )
+    return (df_report, df_patient, df_reaction, df_drug)
 
