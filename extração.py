@@ -50,7 +50,7 @@ def extrair_dados(url, limit=3, max_paginas=1):
 
                 todos_dados.extend(resultados)
 
-                max_tentativa = True
+                sucesso_pagina = True
                 break#quebra do loop de tentativas, para passar para a proxima extração
 
             except requests.exceptions.HTTPError as erro:
