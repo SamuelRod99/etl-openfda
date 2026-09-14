@@ -1,5 +1,6 @@
 import requests
 import logging
+import time
 
 
 logger = logging.getLogger(__name__)
@@ -19,46 +20,65 @@ def extrair_dados(url, limit=3, max_paginas=1):
             "skip": skip
         }
 
-        logger.info(
-            "Extraindo página %d | skip=%d | limit=%d",
-            pagina + 1,
-            skip,
-            limit
-        )
+        tentativa= 1
+        max_tentativa = 3
+        sucesso_pagina = False
 
-        try:
-            resposta = requests.get(
-                url,
-                params=params,
-                timeout=10
+        while tentativa <= max_tentativa:
+
+
+            logger.info(
+                "Extraindo página %d (Tentativa %d/%d) | skip=%d | limit=%d",
+                pagina + 1,
+                skip,
+                limit,
+                tentativa,
             )
 
-            resposta.raise_for_status()
+            try:#tentativa de request
+                resposta = requests.get(
+                    url,
+                    params=params,
+                    timeout=10
+                )
 
-            dados_da_pagina = resposta.json()
+                resposta.raise_for_status()
 
-            resultados = dados_da_pagina.get("results", [])
+                dados_da_pagina = resposta.json()
 
-            todos_dados.extend(resultados)
+                resultados = dados_da_pagina.get("results", [])
 
-            # Incrementa o offset para a próxima requisição
-            skip += limit
+                todos_dados.extend(resultados)
 
-        except requests.exceptions.HTTPError as erro:
-            logger.error("Erro HTTP: %s", erro)
+                max_tentativa = True
+                break#quebra do loop de tentativas, para passar para a proxima extração
+
+            except requests.exceptions.HTTPError as erro:
+                logger.error("Erro HTTP: %s", erro)
+                tentativa += 1
+                time.sleep(2)
+
+            except requests.exceptions.ConnectionError:
+                logger.error("Erro de conexão")
+                tentativa += 1
+                time.sleep(2)
+
+            except requests.exceptions.Timeout:
+                logger.error("A API demorou muito para responder")
+                tentativa += 1
+                time.sleep(2)
+
+            except requests.exceptions.RequestException as erro:
+                logger.error("Erro inesperado: %s", erro)
+                tentativa += 1
+                time.sleep(2)
+
+        if sucesso_pagina == False:
+            logger.error("Falha definitiva na página %d após %d tentativas. Interrompendo script.", pagina + 1, max_tentativa)
             break
 
-        except requests.exceptions.ConnectionError:
-            logger.error("Erro de conexão")
-            break
-
-        except requests.exceptions.Timeout:
-            logger.error("A API demorou muito para responder")
-            break
-
-        except requests.exceptions.RequestException as erro:
-            logger.error("Erro inesperado: %s", erro)
-            break
+        # Incrementa o offset para a próxima requisição
+        skip += limit
 
 
     # Validação dos dados extraídos
