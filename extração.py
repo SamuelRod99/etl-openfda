@@ -30,9 +30,10 @@ def extrair_dados(url, limit=3, max_paginas=1):
             logger.info(
                 "Extraindo página %d (Tentativa %d/%d) | skip=%d | limit=%d",
                 pagina + 1,
+                tentativa,
+                max_tentativa,
                 skip,
                 limit,
-                tentativa,
             )
 
             try:#tentativa de request
@@ -73,9 +74,13 @@ def extrair_dados(url, limit=3, max_paginas=1):
                 tentativa += 1
                 time.sleep(2)
 
-        if sucesso_pagina == False:
-            logger.error("Falha definitiva na página %d após %d tentativas. Interrompendo script.", pagina + 1, max_tentativa)
-            break
+        if not sucesso_pagina:
+            mensagem = (
+                f"Falha definitiva na página {pagina + 1} "
+                f"após {max_tentativa} tentativas.")
+            logger.error(mensagem)
+            raise RuntimeError(mensagem)
+
 
         # Incrementa o offset para a próxima requisição
         skip += limit
@@ -83,11 +88,11 @@ def extrair_dados(url, limit=3, max_paginas=1):
 
     # Validação dos dados extraídos
     if not isinstance(todos_dados, list):
-        logger.error(
-            "Erro: dados retornaram em formato diferente de uma lista"
-        )
+        raise ValueError("Os dados extraídos não estão em formato de lista.")
 
     if len(todos_dados) == 0:
-        logger.error("Erro: nenhum registro foi extraído")
+        raise ValueError("Nenhum registro foi extraído da API.")
+
+    logger.info(f"Extração finalizada: {len(todos_dados)} registros extraídos.")
 
     return todos_dados
