@@ -1,12 +1,9 @@
 import logging
 
 from extração import extrair_dados
-from transformação import organizar_dados
-from transformação import criar_dataframes
-from transformação import transformar_dados
+from transformação import (organizar_dados, criar_dataframes, transformar_dados)
 from load import load
-from Validacao import validar_dados
-from Validacao import valid_quanti_dados
+from Validacao import (validar_dados, valid_quanti_dados)
 
 
 # Configuração do logging
@@ -93,16 +90,16 @@ def main():
     logger.info("ETL executado com sucesso!")
 
     print("\nREPORT:")
-    print(df_report.info())
+    df_report.info()
 
     print("\nPATIENT:")
-    print(df_patient.info())
+    df_patient.info()
 
     print("\nREACTION:")
-    print(df_reaction.info())
+    df_reaction.info()
 
     print("\nDRUG:")
-    print(df_drug.info())
+    df_drug.info()
 
 
 if __name__ == "__main__":
