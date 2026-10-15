@@ -1,7 +1,7 @@
 import logging
 import pandas as pd
 import numpy as np
-from mapeamentos import (
+from mapeamento import (
     TRADUCAO_SERIEDADE,
     TRADUCAO_OBITO,
     TRADUCAO_CRITERIO_EXPEDIDO,
@@ -130,7 +130,7 @@ def transformar_dados(df_report, df_patient, df_reaction, df_drug):
 
     #conversão de código: consultar documentação
     df_report['serious'] = df_report['serious'].replace(TRADUCAO_SERIEDADE)
-    
+
     df_report['seriousnessdeath'] = df_report['seriousnessdeath'].replace(TRADUCAO_OBITO)
 
     df_report['fulfillexpeditecriteria'] = df_report['fulfillexpeditecriteria'].replace(TRADUCAO_CRITERIO_EXPEDIDO)
