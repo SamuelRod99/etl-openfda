@@ -1,6 +1,6 @@
-# 🏥 Pipeline ETL de Dados de Eventos Adversos de Medicamentos
+# Pipeline ETL de Dados de Eventos Adversos de Medicamentos
 
-## 📌 Sobre o projeto
+## Sobre o projeto
 
 Este projeto consiste no desenvolvimento de um pipeline ETL (*Extract, Transform, Load*) em Python para coletar, organizar, transformar, validar e armazenar dados públicos sobre eventos adversos relacionados a medicamentos.
 
@@ -8,7 +8,7 @@ Os dados são obtidos por meio da API da [OpenFDA](https://open.fda.gov/apis/dru
 
 O objetivo é praticar conceitos fundamentais de Engenharia de Dados, desenvolvendo um processo automatizado e modular para transformar dados provenientes de uma API em arquivos estruturados, preparados para análises futuras e integração com bancos de dados.
 
-## 🎯 Objetivos
+## Objetivos
 
 - Consumir uma API pública utilizando Python.
 - Implementar a extração de dados com controle de quantidade de registros e paginação.
@@ -20,7 +20,7 @@ O objetivo é praticar conceitos fundamentais de Engenharia de Dados, desenvolve
 - Armazenar os resultados em arquivos CSV.
 - Preparar a estrutura do projeto para futuras integrações com bancos de dados.
 
-## ⚙️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - **Python:** linguagem principal do projeto.
 - **Requests:** consumo da API HTTP.
@@ -29,7 +29,7 @@ O objetivo é praticar conceitos fundamentais de Engenharia de Dados, desenvolve
 - **Pathlib:** gerenciamento de caminhos e criação de diretórios.
 - **OpenFDA API:** fonte pública dos dados.
 
-## 🔄 Etapas do pipeline ETL
+## Etapas do pipeline ETL
 
 ### 1. Extract — Extração
 
