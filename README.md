@@ -92,7 +92,7 @@ Arquivos gerados:
 
 Os arquivos são salvos sem o índice do DataFrame e com codificação UTF-8.
 
-## 🚀 Como executar o projeto
+## Como executar o projeto
 
 ### Pré-requisitos
 
